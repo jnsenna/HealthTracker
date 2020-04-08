@@ -27,7 +27,7 @@ def search(food, debug=False):
 
     if response.status_code == 404:
         print("Error retrieving data. Status code 404.")
-        return '{"Status": 404}'
+        return '{"status": 404}'
 
     return response.text
 
@@ -40,6 +40,9 @@ def pprint_json(text):
 def print_label(text, *args):
     json_text = json.loads(text)
 
+    if "status" in json_text.keys():
+        return
+
     label = ""
 
     for i in range(len(json_text['foods'])):
@@ -47,8 +50,9 @@ def print_label(text, *args):
 
         for stat in args:
             label += f"{stat.capitalize()}: {json_text['foods'][0]['nf_' + stat.replace(' ', '_')]}\n"
-        
+
     print(label)
+
 
 if __name__ == "__main__":
     while True:
@@ -58,5 +62,6 @@ if __name__ == "__main__":
             break
 
         response_text = search(item)
-        # pprint_json(response_text)
-        print_label(response_text, 'calories', 'total fat', 'saturated fat', 'cholesterol', 'sodium', 'total carbohydrate')
+        pprint_json(response_text)
+        print_label(response_text, 'calories', 'total fat',
+                    'saturated fat', 'cholesterol', 'sodium', 'total carbohydrate')
